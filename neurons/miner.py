@@ -21,7 +21,7 @@ from poker44.miner_heuristics import (
     score_chunk_modern,
     score_chunk_modern_with_route,
     score_chunk_legacy,
-    score_chunk_gen7heur5,
+    score_chunk_gen7heur9,
     get_chunk_scorer_startup_check,
     chunk_payload_is_legacy,
     _load_ml_model_filtered0,
@@ -54,10 +54,10 @@ class Miner(BaseMinerNeuron):
         ml_max_hands = int(os.getenv("ML_MAX_HANDS", "40"))
         remove_other_flag = os.getenv("REMOVE_OTHER", "0").strip().lower()
         remove_other_enabled = remove_other_flag in ("1", "true", "yes")
-        chunk_scorer = "gen7heur5"  # hardcoded for gen7heur5 release
+        chunk_scorer = "gen7heur9"  # hardcoded for gen7heur9 release
         bt.logging.info(f"[init] ML_MAX_HANDS={ml_max_hands}")
         bt.logging.info(f"[init] REMOVE_OTHER={remove_other_enabled} (raw={remove_other_flag})")
-        bt.logging.info("[init] POKER44_CHUNK_SCORER=gen7heur5 (hardcoded for gen7heur5 release)")
+        bt.logging.info("[init] POKER44_CHUNK_SCORER=gen7heur9 (hardcoded for gen7heur9 release)")
         bt.logging.info(
             "[init] Chunk scorer override active: ML_MAX_HANDS routing thresholds are ignored "
             "for per-chunk scoring path."
@@ -99,11 +99,11 @@ class Miner(BaseMinerNeuron):
                 repo_root / "poker44" / "miner_heuristics.py",
             ],
             defaults={
-                "model_name": "poker44_gen7heur5",
+                "model_name": "poker44_gen7heur9",
                 "model_version": "7.5",
                 "framework": "python-heuristic",
                 "license": "MIT",
-                "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur5",
+                "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur9",
                 "repo_commit": _git_commit,
                 "notes": "Gen7heur5 trained on benchmark data from the last 2 days.",
                 "open_source": True,
@@ -311,16 +311,16 @@ class Miner(BaseMinerNeuron):
         scores = []
         chunk_routes = []
 
-        # gen7heur5 scorer bypasses per-hand ML models entirely
-        chunk_scorer = "gen7heur5"  # hardcoded for gen7heur5 release
+        # gen7heur9 scorer bypasses per-hand ML models entirely
+        chunk_scorer = "gen7heur9"  # hardcoded for gen7heur9 release
 
-        if chunk_scorer == "gen7heur5":
+        if chunk_scorer == "gen7heur9":
             for index, (chunk, mode) in enumerate(zip(chunks, chunk_modes)):
                 if mode == "legacy":
                     score = score_chunk_legacy(chunk)
                     route = "legacy_payload_heuristics"
                 else:
-                    score, route = score_chunk_gen7heur5(chunk)
+                    score, route = score_chunk_gen7heur9(chunk)
                 scores.append(score)
                 chunk_routes.append(route)
                 bt.logging.debug(

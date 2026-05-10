@@ -1529,11 +1529,11 @@ def _load_gen7heur1_profile() -> dict:
     global _GEN7HEUR1_PROFILE
     if _GEN7HEUR1_PROFILE is not None:
         return _GEN7HEUR1_PROFILE
-    env_path = os.getenv("POKER44_GEN7HEUR1_PROFILE", "")
+    env_path = os.getenv("POKER44_GEN7HEUR9_PROFILE", "")
     if env_path:
         profile_path = Path(env_path)
     else:
-        profile_path = Path(__file__).resolve().parents[1] / "models" / "benchmark_heuristic_profile.json"
+        profile_path = Path(__file__).resolve().parents[1] / "models" / "benchmark_heuristic_profile_gen7heur9.json"
     import json as _json
     with open(profile_path, "r", encoding="utf-8") as _f:
         _GEN7HEUR1_PROFILE = _json.load(_f)
@@ -1695,12 +1695,12 @@ def score_chunk_gen7heur1(chunk: List[dict]) -> Tuple[float, str]:
     return round(max(0.0, min(1.0, score)), 6), "gen7heur1"
 
 
-def score_chunk_gen7heur5(chunk: List[dict]) -> Tuple[float, str]:
-    """Score a chunk with the gen7heur5 profile (same math as gen7heur1)."""
+def score_chunk_gen7heur9(chunk: List[dict]) -> Tuple[float, str]:
+    """Score a chunk with the gen7heur9 profile (same math as gen7heur1)."""
     score, route = score_chunk_gen7heur1(chunk)
     if route == "gen7heur1":
-        return score, "gen7heur5"
-    return score, route.replace("gen7heur1", "gen7heur5")
+        return score, "gen7heur9"
+    return score, route.replace("gen7heur1", "gen7heur9")
 
 
 
@@ -1714,18 +1714,18 @@ def get_chunk_scorer_startup_check(scorer: str) -> Dict[str, object]:
     scorer_norm = (scorer or "").strip().lower()
     info: Dict[str, object] = {
         "scorer": scorer_norm,
-        "active": scorer_norm in {"gen7heur5"},
+        "active": scorer_norm in {"gen7heur9"},
         "ok": True,
         "error": None,
         "details": {},
     }
 
-    if scorer_norm in {"gen7heur5"}:
-        env_path = os.getenv("POKER44_GEN7HEUR1_PROFILE", "")
+    if scorer_norm in {"gen7heur9"}:
+        env_path = os.getenv("POKER44_GEN7HEUR9_PROFILE", "")
         profile_path = (
             Path(env_path)
             if env_path
-            else Path(__file__).resolve().parents[1] / "models" / "benchmark_heuristic_profile.json"
+            else Path(__file__).resolve().parents[1] / "models" / "benchmark_heuristic_profile_gen7heur9.json"
         )
         details = {
             "profile_path": str(profile_path),
